@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+dist/
+# conversion runs
+Input*/
+Output*/
+*DiffLog/
+*ReportsLog/
+ReportsLog/
+# private files must never be committed
+*denylist*
+site_*.json
+*_site_rules.json
+# syntax-check tool build output
+tools/plsql_syntax_check/node_modules/
+tools/plsql_syntax_check/g4/
+tools/plsql_syntax_check/gen/
+tools/plsql_syntax_check/*.g4
+tools/plsql_syntax_check/package*.json

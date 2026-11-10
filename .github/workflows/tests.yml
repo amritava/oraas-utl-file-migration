@@ -1,0 +1,14 @@
+name: tests
+on: [push, pull_request]
+jobs:
+  converter:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python tests/test_download_converter.py
+      - run: python tests/test_upload_converter.py
+      - name: examples still produce the expected output
+        run: python tests/test_examples.py

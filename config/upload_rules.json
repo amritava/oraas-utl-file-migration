@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "direction": "upload",
+  "description": "Recipe for scripts/oraas_convert.py --direction upload. Every site-specific name lives here; edit this file (or a copy passed with --rules), never the Python code.",
+  "package": "oraas_utl",
+  "frame_variable": "l_oraas_frame",
+  "marker": "ORAAS_UTL_UPLOAD_GENERATED",
+  "known_markers": [
+    "ORAAS_UTL_DOWNLOAD_GENERATED"
+  ],
+  "folders": {
+    "output": "OutputForUpload",
+    "diff": "UploadDiffLog",
+    "reports": "UploadReportsLog"
+  },
+  "files": {
+    "extensions": [
+      ".prc",
+      ".sql",
+      ".pls",
+      ".fnc",
+      ".pkb",
+      ".pks",
+      ".pck",
+      ".bdy",
+      ".spc",
+      ".trg"
+    ],
+    "skip_suffix": "_MIG",
+    "output_suffix": "_MIG"
+  },
+  "status": {
+    "comment": "Files a unit WRITES are released only if its status OUT parameter says success at exit (first alias found; two matches = REVIEW_REQUIRED). No status parameter = always released.",
+    "code_aliases": [
+      "PO_ERR_CODE",
+      "PO_ERROR_CODE",
+      "PO_STATUS_CODE",
+      "PO_ERRCODE",
+      "PO_RET_CODE",
+      "PO_RETURN_CODE",
+      "P_ERR_CODE",
+      "P_ERROR_CODE",
+      "P_STATUS_CODE",
+      "PO_STATUS"
+    ],
+    "numeric_success_expression": "({v} IS NULL OR {v} = 0)",
+    "no_status_expression": "TRUE",
+    "exception_exit_expression": "FALSE",
+    "char_success_expression": "(TRIM({v}) IS NULL OR TRIM({v}) = '0')"
+  },
+  "open_handles_at_end": {
+    "comment": "units_without_fclose: unit never calls FCLOSE/FCLOSE_ALL, so legacy files were closed at session end with full content -> submit. units_with_fclose: a handle still open at exit was not closed on that path -> discard (confirmed rule).",
+    "units_without_fclose": "submit",
+    "units_with_fclose": "discard"
+  },
+  "metadata": {
+    "comment": "Optional values stored with every output file. business_date_aliases: first IN parameter found is passed as p_business_date. context_parameters: IN parameters packed as NAME=value; into p_context. DATE/TIMESTAMP parameters are converted with date_format.",
+    "business_date_aliases": [
+      "PI_BUS_DATE",
+      "PI_BUSINESS_DATE",
+      "P_BUS_DATE",
+      "P_BUSINESS_DATE",
+      "PI_RUN_DATE",
+      "P_RUN_DATE",
+      "PI_VALUE_DATE"
+    ],
+    "context_parameters": [],
+    "date_format": "YYYY-MM-DD"
+  },
+  "session": {
+    "comment": "Each upload unit gets this IN parameter if it has none; USERENV('SESSIONID') and SYS_CONTEXT('USERENV','SESSIONID') are replaced by it. It is passed to BEGIN_UNIT as the load id of the input files (ORAAS_FILE_IN.LOAD_ID). Set \"session\": null to disable.",
+    "parameter": "PI_SESSION_ID",
+    "declaration": "pi_session_id IN NUMBER DEFAULT NULL",
+    "comment_tag": "--ORAAS Migration"
+  },
+  "mark_on_close": {
+    "comment": "After every FCLOSE of a file opened in read mode, oraas_utl.mark_input(file, session, flag, unit) is added. FCLOSE inside an exception handler other than NO_DATA_FOUND = failure_flag; elsewhere the flag is decided at run time from the status parameter and error-flag variables. The last mark for a load wins, so a later move to the error folder still ends as 'E'. scope: all | units_without_move.",
+    "enabled": true,
+    "scope": "all",
+    "success_flag": "Y",
+    "failure_flag": "N",
+    "eof_handlers": [
+      "NO_DATA_FOUND"
+    ],
+    "error_flag_aliases": [
+      "V_FEED_FAILED",
+      "V_ERROR_FLAG",
+      "L_ERROR_FLAG",
+      "LV_ERROR_FLAG",
+      "V_HAS_ERROR",
+      "L_HAS_ERROR",
+      "V_FAILED",
+      "L_FAILED"
+    ]
+  },
+  "frame_trigger_calls": [],
+  "_comment_frame_trigger_calls": "Names of your legacy directory-listing procedure(s). Units calling them get a frame even without UTL_FILE, so the replacement (plsql/adapters/listing_procedure_template.sql) knows the unit.",
+  "interface_overrides": {
+    "comment": "Unit name (e.g. PKG.PROC) -> INTERFACE_CODE used in ORAAS_FILE_IN, when not the unit name."
+  },
+  "manual_markers": [],
+  "shared_objects": [],
+  "_comment_site_names": "manual_markers: objects whose presence means a unit was already migrated by hand (e.g. your hand-off procedure or raw upload table). shared_objects: definitions of those objects, never converted. Both empty by default; fill them with YOUR names in a private copy of this file.",
+  "members": {
+    "supported": [
+      "FILE_TYPE",
+      "FOPEN",
+      "FOPEN_NCHAR",
+      "IS_OPEN",
+      "FCLOSE",
+      "FCLOSE_ALL",
+      "FFLUSH",
+      "PUT",
+      "PUT_LINE",
+      "NEW_LINE",
+      "PUTF",
+      "PUT_NCHAR",
+      "PUT_LINE_NCHAR",
+      "PUTF_NCHAR",
+      "FREMOVE",
+      "FRENAME",
+      "FCOPY",
+      "FGETATTR",
+      "FGETPOS",
+      "GET_LINE",
+      "GET_LINE_NCHAR"
+    ],
+    "exceptions": [
+      "INVALID_PATH",
+      "INVALID_MODE",
+      "INVALID_FILEHANDLE",
+      "INVALID_OPERATION",
+      "READ_ERROR",
+      "WRITE_ERROR",
+      "INTERNAL_ERROR",
+      "INVALID_MAXLINESIZE",
+      "INVALID_FILENAME",
+      "ACCESS_DENIED",
+      "INVALID_OFFSET",
+      "DELETE_FAILED",
+      "RENAME_FAILED",
+      "CHARSETMISMATCH",
+      "FILE_OPEN"
+    ],
+    "creates_file": [
+      "FOPEN",
+      "FOPEN_NCHAR",
+      "FCOPY"
+    ],
+    "closes_file": [
+      "FCLOSE",
+      "FCLOSE_ALL"
+    ],
+    "external_effect_warn": [
+      "FGETATTR"
+    ],
+    "upload_scope": [
+      "GET_RAW",
+      "PUT_RAW",
+      "FSEEK"
+    ],
+    "blocked_open_modes": [
+      "rb",
+      "wb",
+      "ab"
+    ],
+    "warn_open_modes": [
+      "a"
+    ],
+    "reads_file": [
+      "GET_LINE",
+      "GET_LINE_NCHAR"
+    ],
+    "disposition": [
+      "FRENAME",
+      "FCOPY",
+      "FREMOVE"
+    ]
+  },
+  "directory_dependencies": {
+    "comment": "These need an Oracle directory object and do not work on ORAAS. They are outside the UTL_FILE shim, so the unit is sent to review.",
+    "calls": [
+      "BFILENAME",
+      "DBMS_LOB.FILEOPEN",
+      "DBMS_LOB.LOADFROMFILE",
+      "DBMS_LOB.LOADCLOBFROMFILE",
+      "DBMS_LOB.LOADBLOBFROMFILE",
+      "DBMS_LOB.FILEEXISTS",
+      "DBMS_LOB.FILEGETNAME",
+      "DBMS_LOB.FILECLOSE",
+      "DBMS_XSLPROCESSOR.CLOB2FILE",
+      "DBMS_XSLPROCESSOR.READ2CLOB",
+      "DBMS_DATAPUMP",
+      "DBMS_ADVISOR.CREATE_FILE"
+    ],
+    "literal_patterns": [
+      "ORGANIZATION\\s+EXTERNAL",
+      "CREATE\\s+(OR\\s+REPLACE\\s+)?DIRECTORY"
+    ]
+  }
+}

@@ -1,0 +1,4 @@
+#!/bin/sh
+# Copy to .git/hooks/pre-commit and make it executable. Set ORAAS_DENYLIST or keep the default path.
+DENY="${ORAAS_DENYLIST:-$HOME/private/oraas_denylist.txt}"
+exec python scripts/leak_check.py --denylist "$DENY" .
