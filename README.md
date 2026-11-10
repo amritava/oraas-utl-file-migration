@@ -1,5 +1,5 @@
 # oraas-utl-file-migration
-
+“Not affiliated with Oracle or any employer. Test in a non-production environment.”
 Migrate Oracle PL/SQL that uses **UTL_FILE** to **Oracle Autonomous Database (ORAAS)**, where
 UTL_FILE and directory objects are not available, without rewriting business logic.
 
